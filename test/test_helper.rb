@@ -34,8 +34,8 @@ class ActiveSupport::TestCase
       uid: user.uid,
       info: {
         email: user.email,
-        nickaname: user.name
-      },
+        nickname: user.name
+      }
     }
   end
 
@@ -45,7 +45,10 @@ class ActiveSupport::TestCase
     OmniAuth.config.mock_auth[:github] = OmniAuth::AuthHash.new(mock_auth_hash(user))
 
     #Act Try to call the callback route
-    get auth_callback_path(:github)
+    get omniauth_callback_path(:github)
+
+    user = User.find_by(uid: user.uid, username: user.username)
+    expect(user).wont_be_nil
 
     #Verify user ID was saved. if not- test is invalid
     expect(session[:user_id]).must_equal user.id
